@@ -12,10 +12,10 @@ script: # all commands that need to execute to run test suite. each return other
   - docker run -e CI=true maknovicell/react-test npm test # npm run test waits for input so it just hangs. thats why we add -e. npm run test overrides the default command.
 
 after_success:
-  - docker build -t maknovicell/multi-client -f ./client # default dockerfile name is used so we dont specify it
-  - docker build -t maknovicell/multi-nginx -f ./nginx
-  - docker build -t maknovicell/multi-server -f ./server
-  - docker build -t maknovicell/multi-worker -f ./worker
+  - docker build -t maknovicell/multi-client ./client # default dockerfile name is used so we dont specify it
+  - docker build -t maknovicell/multi-nginx ./nginx
+  - docker build -t maknovicell/multi-server ./server
+  - docker build -t maknovicell/multi-worker ./worker
   
   # Login to docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin # we tell it to expect the password on the standrad in channel
