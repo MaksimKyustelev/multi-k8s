@@ -24,7 +24,7 @@ services:
       dockerfile: Dockerfile.dev # jsut the name of the dockerfile
       context: ./server # context sets where it needs to look in - current working directory and find a folder called server.
     volumes: # everything is in /app based on the Dockerfile
-      # - /app/node_modules # inside the container dont try to override the folder. Ensures you dont have to rebuild image when you make changes to source code.
+      - /app/node_modules # inside the container dont try to override the folder. Ensures you dont have to rebuild image when you make changes to source code.
       - ./server:/app # look at the server dir. and copy everything inside there in the app folder of the container. Except the node_modules
     environment:
       - REDIS_HOST=redis
@@ -41,14 +41,14 @@ services:
       dockerfile: Dockerfile.dev
       context: ./client
     volumes:
-      # - /app/node_modules
+      - /app/node_modules
       - ./client:/app
   worker:
     build:
       dockerfile: Dockerfile.dev
       context: ./worker
     volumes:
-      # - /app/node_modules
+      - /app/node_modules
       - ./worker:/app
     environment:
       - REDIS_HOST=redis
