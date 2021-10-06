@@ -3,7 +3,7 @@ WORKDIR '/app'
 COPY ./package.json ./
 RUN npm install
 COPY . .
-CMD ["npm", "run", "build"]
+RUN npm run build
 # output is folder inside the app directory called build so we need to copy it to nginx phase of the build
 
 FROM nginx
