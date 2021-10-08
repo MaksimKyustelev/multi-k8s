@@ -5,24 +5,28 @@
             "name": "client",
             "image": "maknovicell/multi-client",
             "hostname": "client",
-            "essential": false
+            "essential": false,
+            "memory": 256
         },
         {
             "name": "server",
             "image": "maknovicell/multi-server",
             "hostname": "api",
-            "essential": false
+            "essential": false,
+            "memory": 256
         },
         {
             "name": "worker",
             "image": "maknovicell/multi-worker",
             "hostname": "worker",
-            "essential": false
+            "essential": false,
+            "memory": 256
         },
         {
             "name": "nginx",
             "image": "maknovicell/multi-nginx",
             "essential": true,
+            "memory": 256,
             "portMappings": [
                 {
                     "hostPort": 80,
