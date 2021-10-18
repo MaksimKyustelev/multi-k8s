@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: postgres
+  template: # when created we want long term storage - persistent claim
+    metadata:
+      labels:
+        component: postgres
+    spec:
+      volumes: # sets request on the Pod to reach out to Kubernetes and say I need some type of storage that meets all the requir. defined here
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: database-persistent-volume-claim # looks for this is in the volume claim advertisements
+      containers:
+        - name: postgres
+          image: postgres
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-storage # most important - matches the volume name. 
+              mountPath: /var/lib/postgresql/data # where inside the container should this storage be available. Default storage location for postgres
+              subPath: postgres # any data inside the container, inside the mountPath. Nested inside the persistent volume. - Postgres specfic
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pgpassword
+                  key: PGPASSWORD

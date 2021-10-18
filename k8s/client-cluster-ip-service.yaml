@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: client-cluster-ip-service
+spec:
+  type: ClusterIP # !!
+  selector: # provide selector to select which deployment it refers to
+    component: web # matches!
+  ports:
+    - port: 3000 # how other pods or objects inside the cluster will access this pod
+      targetPort: 3000 # port on target port we allow access to. 3000 inside of the container matches the 3000 other objects have to hit
+      #nodePort: irrelevant as it is not accessible from the outside world 

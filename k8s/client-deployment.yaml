@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: web # the component this will be managing is the web side of things
+  template:
+    metadata:
+      labels:
+        component: web # matches the Pod with the container
+    spec:
+      containers:
+        - name: client
+          image: maknovicell/multi-client
+          ports: 
+            - containerPort: 3000 # the port mounted and specified in the multi-client image.

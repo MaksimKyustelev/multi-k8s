@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-deployment # worker image does not need to be accessible/connected to from the cluster of objects.
+spec: # hence does not need a port or a service - clusterip service
+  replicas: 1
+  selector:
+    matchLabels:
+      component: worker
+  template:
+    metadata:
+      labels:
+        component: worker # matches the selector
+    spec:
+      containers:
+        - name: worker
+          image: maknovicell/multi-worker
+          env: 
+            - name: REDIS_HOST
+              value: redis-cluster-ip-service # name of the cluster ip service of the deployment
+            - name: REDIS_PORT
+              value: '6379' # value setup everywhere

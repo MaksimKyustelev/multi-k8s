@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim # not an actual instance of volume. 
+metadata:
+  name: database-persistent-volume-claim
+spec: # all under spoec is that if we attach this in a Node Kubernetes needs to find it and set it
+  accessModes:
+    - ReadWriteOnce # can be used by single node at a time.
+    # - ReadOnlyMana # multiple nodes at the same time cna read info from this volume
+    # - ReadWriteMany # you can both read and write from many nodes at the same time
+  resources:
+    requests:
+      storage: 2Gi # k8s will have to find provisioned ahead of time or on the fly for 2 Gis of space
+# storageClassName # has default for AWS - block store but u can customize with this
+# k8s by default creates the persistent volume on your PC Hard Drive.

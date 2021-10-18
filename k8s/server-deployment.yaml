@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec: # how this deployment behaves
+  replicas: 3
+  selector: # what it will use to find the set of Pods it will control
+    matchLabels:
+      component: server # indicates the componenet inside the application is the server
+  template:
+    metadata:
+      labels:
+        component: server # at least match inside of the spec
+    spec:
+      containers:
+        - name: server
+          image: maknovicell/multi-server # it does expect ENV VAR that tells it where to connect to redis and postgres
+          ports:
+            - containerPort: 5000
+          env: 
+            - name: REDIS_HOST
+              value: redis-cluster-ip-service # name of the cluster ip service of the deployment
+            - name: REDIS_PORT
+              value: '6379' # value setup everywhere
+            - name: PGUSER
+              value: postgres
+            - name: PGHOST
+              value: postgress-cluster-ip-service
+            - name: PGPORT
+              value: '5432' # same as on the service. it is setup as avilable
+            - name:  PGDATABASE
+              value: postgres
+            - name: PGPASSWORD # name of env variable, that is how it will show up in the container
+              valueFrom:
+                secretKeyRef:
+                  name: pgpassword # from the below
+                  key: PGPASSWORD # from the kubectl create secret generic pgpassword --from-literal PGPASSWORD=12345asdf
+                  # a secret can have many key value pairs 
