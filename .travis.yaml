@@ -1,27 +1,32 @@
 sudo: required # because we are making use of docker
 services:
   - docker # we want docker preinstalled
-# env:
-#   global:
-#     - SHA=$(git rev-parse HEAD)
-#     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
+env:
+  global: # specifying env variables for travis env.
+    - SHA=$(git rev-parse HEAD) # for the deploy.sh
+    - CLOUDSDK_CORE_DISABLE_PROMPTS=1 # configs gcloud so it doesnt display prompts that require user prompt - "are u sure blablaba"
 before_install:
+  # take and use the encrypted version of the file on travis ci and unecnrypt it
   - openssl aes-256-cbc -K $encrypted_9f3b5599b056_key -iv $encrypted_9f3b5599b056_iv -in service-account.json.enc -out service-account.json -d
-  - curl https://sdk.cloud.google.com | bash > /dev/null;
-  - source $HOME/google-cloud-sdk/path.bash.inc
-  - gcloud components update kubectl
-  - gcloud auth activate-service-account --key-file service-account.json
-  - gcloud config set project steady-petal-307322
-  - gcloud config set compute/zone us-central1-c
+  - curl https://sdk.cloud.google.com | bash > /dev/null; # downloads the g cloud sdk and installs locally on the instace running travis ci
+  - source $HOME/google-cloud-sdk/path.bash.inc # look at the default install directory of gcloud sdk and it will source the path.bash.inc -> applys additional config
+  - gcloud components update kubectl # installs and updates kubectl inside travis environment 
+  - gcloud auth activate-service-account --key-file service-account.json # equivalent to IAM. we need to provide set of credentials
+  - gcloud config set project multi-k8s-329404
+  - gcloud config set compute/zone eu-north1-a
   - gcloud container clusters get-credentials multi-cluster
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker build -t stephengrider/react-test -f ./client/Dockerfile.dev ./client
+  - docker build -t maknovicell/react-test -f ./client/Dockerfile.dev ./client # remember the build context
 
 script:
-  - docker run -e CI=true stephengrider/react-test npm test
+  - docker run -e CI=true maknovicell/react-test npm test # override default command and use npm test
 
 deploy:
-  provider: script
-  script: bash ./deploy.sh
+  provider: script # dont do anything with the project, just run the script
+  script: bash ./deploy.sh # custom script file called deploy.sh that has serious of commands
   on:
     branch: master
+
+    # docker run -it -v ${pwd}:/app ruby:2.4 sh -> executed to get ruby in a container with a volume.
+    # copies all of the local files into an app folder in the container
+    # as we have added a volume, we copy paste the service json to the folder path and it gets linked to the container volume
