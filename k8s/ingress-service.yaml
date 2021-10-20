@@ -9,7 +9,7 @@ metadata:
     # ADD ANNOTATION
     nginx.ingress.kubernetes.io/rewrite-target: /$1 # config how the actual copy of nginx behaves. Rewrites the request. So server can serve without the api..?
     # UPDATE ANNOTATION
-spec:
+spec: # by default it uses https. works on dev. needs extra on prod.
   rules:
     - http:
         paths: # 2 possible paths to route traffic
